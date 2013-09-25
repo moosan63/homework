@@ -1,0 +1,15 @@
+: cascade base
+: around content -> {
+       <form action="<: $c.req.uri_for('/inputs') :>" method="post" >
+         <input type="text" size="10" name="body" />
+         <input type="submit" value="送信する">
+       </form>
+
+<h2>今までの入力データ</h2>
+<ul>
+  <: while(my $row = $results.next ) { :>
+  <li> ID : <: $row.id :>, INPUT :  <: $row.body :> </li>
+  <: } :>
+</ul>
+: }
+
