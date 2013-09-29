@@ -1,2 +1,5 @@
-<h2><: $todo.next.body :></h2>
+<h2><: $todo.body :></h2>       
+<form action="<: $c.req.uri_for('/'~$todo.id~'/delete') :>" method="post">
+<input type="submit" value="削除">
+</form> 
 <a href="/">戻る</a>

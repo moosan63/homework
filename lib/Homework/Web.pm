@@ -22,7 +22,7 @@ filter 'set_title' => sub {
 };
 
 #index
-get '/' => sub {
+get '/' => [qw/set_title/] => sub {
     my ( $self, $c )  = @_;
     my $id = $c->args->{id};
     my $prev_inputs = $self->model->search('todos');
@@ -52,11 +52,17 @@ post '/' => sub {
 get '/:id' => sub {
     my ($self, $c) = @_;
     my $id = $c->args->{id};
-    my $todo = $self->model->search('todos',{id => $id});
+    my $todo = $self->model->single('todos',{id => $id});
     $c->render('show.tx',{todo => $todo }); 
 };
 
 #delete
-post '/:id/'
+post '/:id/delete' => sub{
+    my ($self, $c) = @_;
+    my $id = $c->args->{id};
+    my $todo = $self->model->single('todos',{id => $id});
+    $todo -> delete;
+    $c->redirect('/');
+};
 1;
 
