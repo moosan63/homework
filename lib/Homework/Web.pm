@@ -23,9 +23,8 @@ filter 'set_title' => sub {
 #index
 get '/' => [qw/set_title/] => sub {
     my ( $self, $c )  = @_;
-    my $id = $c->args->{id};
-    my $todos = $self->model->search('todos');
-    $c->render('index.tx', { greeting => "Hello", results => $todos, id=>$id });
+    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    $c->render('index.tx', { todos => $todos} );
 };
 
 #create
@@ -33,13 +32,16 @@ post '/' => sub {
     my ($self, $c ) = @_;
     my $body = $c->req->parameters->{body};
     my $genre = $c->req->parameters->{genre};
+    my $priority = $c->req->parameters->{priority};
+
     $self->model->insert( 'todos', { 
         body => $body,
         genre => $genre,
+        priority => $priority,
                    });
 
-    my $todos = $self->model->search('todos');
-    $c->render('index.tx', { results => $todos });
+    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    $c->render('index.tx', { todos => $todos} );
 };
 
 #show
@@ -58,11 +60,13 @@ post '/:id/update' => sub{
 
     my $body = $c->req->parameters->{body};    
     my $genre = $c->req->parameters->{genre};    
-    
+    my $priority = $c->req->parameters->{priority};
+
     my $todo = $self->model->single('todos',{id => $id});
     $todo ->update({
         body => $body,
-        genre => $genre
+        genre => $genre,
+        priority => $priority,    
                    });
 
     $c->redirect('/');
@@ -76,7 +80,8 @@ post '/:id/delete' => sub{
     my $todo = $self->model->single('todos',{id => $id});
     $todo -> delete;
 
-    $c->redirect('/');
+    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    $c->render('index.tx', { todos => $todos} );
 };
 1;
 

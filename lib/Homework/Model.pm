@@ -17,7 +17,7 @@ use DBIx::Skinny::Schema;
 
 install_table 'todos' => schema {
     pk 'id';
-    columns qw/id body genre/;
+    columns qw/id body genre priority/;
     
 };
 1;

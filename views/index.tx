@@ -10,8 +10,9 @@
       </div>
     </div>
     
-    <div class="form-group">
+    <div class="form-group">    
       <div class="col-md-5">
+        <label>Genre</label>
         <select name="genre" class="form-control">
           <option value="work">Work</option>
           <option value="hobby">Hobby</option>
@@ -22,7 +23,18 @@
 
     <div class="form-group">
       <div class="col-md-5">
-        <input type="submit" placeholder="Enter something" class="form-control btn btn-success" value="SEND">
+        <label>Priority</label>
+        <select name="priority" class="form-control">
+          <option value="1">safe</option>
+          <option value="2">hurry</option>
+          <option value="3">炎上案件</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-md-5">
+        <input type="submit" placeholder="Enter something" class="form-control btn btn-info" value="SEND">
       </div>
     </div>
   </form>
@@ -31,20 +43,27 @@
 <div class="row">
 <table class="table">
   <tr>
-    <th>Genre</th>
-    <th>Task</th>
-    <th>#</th>
+    <th class="col-xs-1">Genre</th>
+    <th class="col-xs-6">Task</th>
+    <th class="col-xs-1">#</th>
   </tr>
-  <: while(my $row = $results.next ) { :>
-  <tr>
+  <: while(my $todo = $todos.next ) { :>
+  <tr <: 'class=danger' if $todo.priority == 3 :>>
     <td>
-      <span class="label label-info"> <: $row.genre :> </span>
+      <span class="label label-info"> <: $todo.genre :> </span>
+      <: if ($todo.priority == 3) { :>
+      <: "<span class=\"label label-danger\"> 炎上案件 </span>" | raw; :>
+      <: }else if ($todo.priority == 2) { :>
+      <: "<span class=\"label label-warning\"> hurry </span>" | raw; :>      
+      <: }else if ($todo.priority == 1) { :>
+      <: "<span class=\"label label-primary\"> safe </span>" | raw; :>      
+      <: } :>
     </td>
     <td>
-      <a href="/<: $row.id :>"> <: $row.body :></a>
+      <a href="/<: $todo.id :>"> <: $todo.body :></a>
     </td>
     <td>
-      <form action="<: $c.req.uri_for('/'~ $row.id ~'/delete') :>" method="post" class="form-inline" >     
+      <form action="<: $c.req.uri_for('/'~ $todo.id ~'/delete') :>" method="post" class="form-inline" >     
         <input type="submit" value="DONE" class="btn btn-sm btn-warning">
       </form>
     </td>     
