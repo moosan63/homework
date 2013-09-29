@@ -1,25 +1,16 @@
 package Homework::Web;
-
+ 
 use strict;
 use warnings;
 use utf8;
 use Kossy;
-use DBD::mysql;
-use Teng;
-use Teng::Schema::Loader;
+use Homework::Model;
+use Data::Dumper;
+sub model{
+    my $self = shift;
+    $self->{_model} ||= Homework::Model->new;     
+}
 
-my $dsn    = 'dbi:mysql:database=homework;host=localhost';
-my $user   = 'testuser';
-my $passwd = 'testpassword';
-
-my $dbh = DBI -> connect( $dsn, $user, $passwd ,{
-                          'mysql_enable_utf8' => 1
-                          });
-
-my $teng = Teng::Schema::Loader -> load(
-    'dbh' => $dbh,
-    'namespace' => 'Homework::DB'
-    );
 
 filter 'set_title' => sub {
     my $app = shift;
@@ -30,13 +21,13 @@ filter 'set_title' => sub {
     }
 };
 
-get '/' => [qw/set_title/] => sub {
+get '/' => sub {
     my ( $self, $c )  = @_;
-    my $prev_inputs = $teng->search('inputs', {}, +{limit => 10, order_by => 'id desc'});
+    my $prev_inputs = $self->model->search('todos');
     $c->render('index.tx', { greeting => "Hello", results => $prev_inputs });
 };
 
-post '/inputs' => sub {
+post '/' => sub {
     my ($self, $c ) = @_;
     my $result = $c->req->validator([
         'body' => {
@@ -45,11 +36,11 @@ post '/inputs' => sub {
                 ],
         },
                                     ]);
-    $teng->insert( inputs =>{ 
+    $self->model->insert( todos =>{ 
         body => $result->valid('body')
                    });
 
-    my $prev_inputs = $teng->search('inputs', {}, +{limit => 10, order_by => 'id desc'});
+    my $prev_inputs = $self->model->search('todos');
     $c->render('index.tx', { results => $prev_inputs });
 };
 1;
