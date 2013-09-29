@@ -1,6 +1,54 @@
 : cascade base
+
 : around content -> {
-  <h3>Input your task</h3>
+<div class="row">
+<button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-primary btn-block">CREATE NEW TASK</button>
+</div>  
+
+<div class="row">
+<table class="table">
+  <tr>
+    <th class="col-xs-1">Genre</th>
+    <th class="col-xs-6">Task</th>
+    <th class="col-xs-1">#</th>
+  </tr>
+  <: while(my $todo = $todos.next ) { :>
+  <tr <: 'class=danger' if $todo.priority == 3 :>>
+    <td>
+      <span class="label label-info"> <: $todo.genre :> </span>
+      <: if ($todo.priority == 3) { :>
+      <: "<span class=\"label label-danger\"> 炎上案件 </span>" | raw; :>
+      <: }else if ($todo.priority == 2) { :>
+      <: "<span class=\"label label-warning\"> hurry </span>" | raw; :>      
+      <: }else if ($todo.priority == 1) { :>
+      <: "<span class=\"label label-primary\"> safe </span>" | raw; :>      
+      <: } :>
+    </td>
+    <td>
+      <a href="/<: $todo.id :>"> <: $todo.body :></a>
+    </td>
+    <td>
+      <form action="<: $c.req.uri_for('/'~ $todo.id ~'/delete') :>" method="post" class="form-inline" >     
+        <input type="submit" value="DONE" class="btn btn-sm btn-warning">
+      </form>
+    </td>     
+  </tr>
+  <: } :>
+
+</table>
+<ul class="list-group">
+</ul>
+</div>
+
+  <!-- CreateTaskModal -->
+  <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Input your task</h4>
+        </div>
+        <div class="modal-body">
 
 <div class="row">
   <form action="<: $c.req.uri_for('/') :>" method="post" class="form" >
@@ -40,39 +88,22 @@
   </form>
 </div>
 
-<div class="row">
-<table class="table">
-  <tr>
-    <th class="col-xs-1">Genre</th>
-    <th class="col-xs-6">Task</th>
-    <th class="col-xs-1">#</th>
-  </tr>
-  <: while(my $todo = $todos.next ) { :>
-  <tr <: 'class=danger' if $todo.priority == 3 :>>
-    <td>
-      <span class="label label-info"> <: $todo.genre :> </span>
-      <: if ($todo.priority == 3) { :>
-      <: "<span class=\"label label-danger\"> 炎上案件 </span>" | raw; :>
-      <: }else if ($todo.priority == 2) { :>
-      <: "<span class=\"label label-warning\"> hurry </span>" | raw; :>      
-      <: }else if ($todo.priority == 1) { :>
-      <: "<span class=\"label label-primary\"> safe </span>" | raw; :>      
-      <: } :>
-    </td>
-    <td>
-      <a href="/<: $todo.id :>"> <: $todo.body :></a>
-    </td>
-    <td>
-      <form action="<: $c.req.uri_for('/'~ $todo.id ~'/delete') :>" method="post" class="form-inline" >     
-        <input type="submit" value="DONE" class="btn btn-sm btn-warning">
-      </form>
-    </td>     
-  </tr>
-  <: } :>
 
-</table>
-<ul class="list-group">
-</ul>
-</div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- EditTaskModal -->
+  <div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Input your task</h4>
+        </div>
+        <div class="modal-body">
+
+
 : }
 

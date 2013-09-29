@@ -53,6 +53,7 @@ get '/:id' => sub {
     $c->render('show.tx',{todo => $todo }); 
 };
 
+
 #update putもしくはpatchメソッドが欲しい
 post '/:id/update' => sub{
     my ($self, $c) = @_;
