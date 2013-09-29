@@ -1,6 +1,5 @@
 homework
 ========
 
-homework for training
-
-ss.png is evidence.
+1st day product
+![shinchoku](http://moosan.org/shinchoku-ss.png)

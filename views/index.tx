@@ -1,15 +1,59 @@
 : cascade base
 : around content -> {
-       <form action="<: $c.req.uri_for('/') :>" method="post" >
-         <input type="text" size="10" name="body" />
-         <input type="submit" value="送信する">
-       </form>
+  <h3>Input your task</h3>
 
-<h2>今までの入力データ</h2>
-<ul>
+<div class="row">
+  <form action="<: $c.req.uri_for('/') :>" method="post" class="form" >
+    <div class="form-group">
+      <div class="col-md-5">
+        <input type="text" placeholder="Enter your Task" class="form-control" size="10" name="body" class="form-control" />
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <div class="col-md-5">
+        <select name="genre" class="form-control">
+          <option value="work">Work</option>
+          <option value="hobby">Hobby</option>
+          <option value="meeting">Meeting</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-md-5">
+        <input type="submit" placeholder="Enter something" class="form-control btn btn-success" value="SEND">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="row">
+<table class="table">
+  <tr>
+    <th>Genre</th>
+    <th>Task</th>
+    <th>#</th>
+  </tr>
   <: while(my $row = $results.next ) { :>
-  <li> No : <: $row.id :>, タスク :  <a href="/<: $row.id :>"> <: $row.body :> </a> </li>
+  <tr>
+    <td>
+      <span class="label label-info"> <: $row.genre :> </span>
+    </td>
+    <td>
+      <a href="/<: $row.id :>"> <: $row.body :></a>
+    </td>
+    <td>
+      <form action="<: $c.req.uri_for('/'~ $row.id ~'/delete') :>" method="post" class="form-inline" >     
+        <input type="submit" value="DONE" class="btn btn-sm btn-warning">
+      </form>
+    </td>     
+  </tr>
   <: } :>
+
+</table>
+<ul class="list-group">
 </ul>
+</div>
 : }
 

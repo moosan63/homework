@@ -11,7 +11,6 @@ sub model{
     $self->{_model} ||= Homework::Model->new;     
 }
 
-
 filter 'set_title' => sub {
     my $app = shift;
     sub {
@@ -32,20 +31,15 @@ get '/' => [qw/set_title/] => sub {
 #create
 post '/' => sub {
     my ($self, $c ) = @_;
-    my $id = $c->args->{id};
-    my $result = $c->req->validator([
-        'body' => {
-            rule => [
-                ['NOT_NULL','empty body'],
-                ],
-        },
-                                    ]);
-    $self->model->insert( todos =>{ 
-        body => $result->valid('body')
+    my $body = $c->req->parameters->{body};
+    my $genre = $c->req->parameters->{genre};
+    $self->model->insert( 'todos', { 
+        body => $body,
+        genre => $genre,
                    });
 
     my $todos = $self->model->search('todos');
-    $c->render('index.tx', { results => $todos, id=>$id });
+    $c->render('index.tx', { results => $todos });
 };
 
 #show
@@ -56,20 +50,20 @@ get '/:id' => sub {
     my $todo = $self->model->single('todos',{id => $id});
     $c->render('show.tx',{todo => $todo }); 
 };
+
 #update putもしくはpatchメソッドが欲しい
 post '/:id/update' => sub{
     my ($self, $c) = @_;
     my $id = $c->args->{id};
+
+    my $body = $c->req->parameters->{body};    
+    my $genre = $c->req->parameters->{genre};    
     
-    my $result = $c->req->validator([
-        'body' => {
-            rule => [
-                ['NOT_NULL','empty body'],
-                ],
-        },
-                                    ]);
     my $todo = $self->model->single('todos',{id => $id});
-    $todo ->({body => $result->valid('body')});
+    $todo ->update({
+        body => $body,
+        genre => $genre
+                   });
 
     $c->redirect('/');
 };
