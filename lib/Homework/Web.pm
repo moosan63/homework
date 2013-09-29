@@ -25,8 +25,8 @@ filter 'set_title' => sub {
 get '/' => [qw/set_title/] => sub {
     my ( $self, $c )  = @_;
     my $id = $c->args->{id};
-    my $prev_inputs = $self->model->search('todos');
-    $c->render('index.tx', { greeting => "Hello", results => $prev_inputs, id=>$id });
+    my $todos = $self->model->search('todos');
+    $c->render('index.tx', { greeting => "Hello", results => $todos, id=>$id });
 };
 
 #create
@@ -44,24 +44,44 @@ post '/' => sub {
         body => $result->valid('body')
                    });
 
-    my $prev_inputs = $self->model->search('todos');
-    $c->render('index.tx', { results => $prev_inputs, id=>$id });
+    my $todos = $self->model->search('todos');
+    $c->render('index.tx', { results => $todos, id=>$id });
 };
 
 #show
 get '/:id' => sub {
     my ($self, $c) = @_;
     my $id = $c->args->{id};
+
     my $todo = $self->model->single('todos',{id => $id});
     $c->render('show.tx',{todo => $todo }); 
 };
+#update putもしくはpatchメソッドが欲しい
+post '/:id/update' => sub{
+    my ($self, $c) = @_;
+    my $id = $c->args->{id};
+    
+    my $result = $c->req->validator([
+        'body' => {
+            rule => [
+                ['NOT_NULL','empty body'],
+                ],
+        },
+                                    ]);
+    my $todo = $self->model->single('todos',{id => $id});
+    $todo ->({body => $result->valid('body')});
 
-#delete
+    $c->redirect('/');
+};
+
+#delete deleteメソッドが欲しい
 post '/:id/delete' => sub{
     my ($self, $c) = @_;
     my $id = $c->args->{id};
+
     my $todo = $self->model->single('todos',{id => $id});
     $todo -> delete;
+
     $c->redirect('/');
 };
 1;
