@@ -8,7 +8,7 @@
 <h2>今までの入力データ</h2>
 <ul>
   <: while(my $row = $results.next ) { :>
-  <li> No : <: $row.id :>, タスク :  <: $row.body :> </li>
+  <li> No : <: $row.id :>, タスク :  <a href="/<: $row.id :>"> <: $row.body :> </a> </li>
   <: } :>
 </ul>
 : }

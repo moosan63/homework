@@ -1,0 +1,2 @@
+<h2><: $todo.next.body :></h2>
+<a href="/">戻る</a>

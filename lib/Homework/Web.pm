@@ -21,14 +21,18 @@ filter 'set_title' => sub {
     }
 };
 
+#index
 get '/' => sub {
     my ( $self, $c )  = @_;
+    my $id = $c->args->{id};
     my $prev_inputs = $self->model->search('todos');
-    $c->render('index.tx', { greeting => "Hello", results => $prev_inputs });
+    $c->render('index.tx', { greeting => "Hello", results => $prev_inputs, id=>$id });
 };
 
+#create
 post '/' => sub {
     my ($self, $c ) = @_;
+    my $id = $c->args->{id};
     my $result = $c->req->validator([
         'body' => {
             rule => [
@@ -41,7 +45,18 @@ post '/' => sub {
                    });
 
     my $prev_inputs = $self->model->search('todos');
-    $c->render('index.tx', { results => $prev_inputs });
+    $c->render('index.tx', { results => $prev_inputs, id=>$id });
 };
+
+#show
+get '/:id' => sub {
+    my ($self, $c) = @_;
+    my $id = $c->args->{id};
+    my $todo = $self->model->search('todos',{id => $id});
+    $c->render('show.tx',{todo => $todo }); 
+};
+
+#delete
+post '/:id/'
 1;
 
