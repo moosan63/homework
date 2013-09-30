@@ -3,7 +3,7 @@
 
   <h3> Edit </h3>
 <div class="row">
-  <form action="<: $c.req.uri_for('/'~ $todo.id ~'/update') :>" method="post" class="form" >
+  <form action="<: $c.req.uri_for('/'~$id~'/update') :>" method="post" class="form" >
     <div class="form-group">
       <div class="col-md-5">
         <input type="text" placeholder="Enter your Task" class="form-control" size="10" name="body" class="form-control" value="<: $todo.body :>" />
@@ -12,6 +12,7 @@
 
     <div class="form-group">
       <div class="col-md-5">
+        <label>Genre</label>
         <select name="genre" class="form-control">
           <option value="work" <:"selected" if ($todo.genre == 'work') :> >Work</option>
           <option value="hobby" <:"selected" if ($todo.genre == 'hobby') :>>Hobby</option>

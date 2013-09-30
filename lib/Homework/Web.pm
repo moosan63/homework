@@ -6,9 +6,19 @@ use utf8;
 use Kossy;
 use Homework::Model;
 use Data::Dumper;
+use Homework::Mongo;
+
+# $self->model : MySQL
+# $self->mongo : MongoDB
+
 sub model{
     my $self = shift;
     $self->{_model} ||= Homework::Model->new;     
+}
+
+sub mongo{
+    my $self = shift;
+    $self->{_mongo} ||=Homework::Mongo->init;
 }
 
 filter 'set_title' => sub {
@@ -23,7 +33,8 @@ filter 'set_title' => sub {
 #index
 get '/' => [qw/set_title/] => sub {
     my ( $self, $c )  = @_;
-    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    #my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    my $todos = $self->mongo->query->sort({priority=>-1});
     $c->render('index.tx', { todos => $todos} );
 };
 
@@ -34,13 +45,13 @@ post '/' => sub {
     my $genre = $c->req->parameters->{genre};
     my $priority = $c->req->parameters->{priority};
 
-    $self->model->insert( 'todos', { 
+    $self->mongo->insert({ 
         body => $body,
         genre => $genre,
         priority => $priority,
                    });
-
-    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    my $todos = $self->mongo->find;
+    #my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
     $c->render('index.tx', { todos => $todos} );
 };
 
@@ -49,8 +60,8 @@ get '/:id' => sub {
     my ($self, $c) = @_;
     my $id = $c->args->{id};
 
-    my $todo = $self->model->single('todos',{id => $id});
-    $c->render('show.tx',{todo => $todo }); 
+    my $todo = $self->mongo->find_one({_id=>MongoDB::OID->new(value => $id)}); 
+    $c->render('show.tx',{todo => $todo, id =>$c->args->{id} },); 
 };
 
 
@@ -62,9 +73,10 @@ post '/:id/update' => sub{
     my $body = $c->req->parameters->{body};    
     my $genre = $c->req->parameters->{genre};    
     my $priority = $c->req->parameters->{priority};
-
-    my $todo = $self->model->single('todos',{id => $id});
-    $todo ->update({
+   
+    $self->mongo->update(
+        {"_id"=>MongoDB::OID->new(value => $id)},
+        {
         body => $body,
         genre => $genre,
         priority => $priority,    
@@ -77,11 +89,11 @@ post '/:id/update' => sub{
 post '/:id/delete' => sub{
     my ($self, $c) = @_;
     my $id = $c->args->{id};
+    print Dumper $c->args->{id};
 
-    my $todo = $self->model->single('todos',{id => $id});
-    $todo -> delete;
+    $self->mongo->remove({_id => MongoDB::OID->new(value => $id)});
 
-    my $todos = $self->model->search('todos',{},{order_by => {'priority' => 'DESC' }});
+    my $todos = $self->mongo->find;
     $c->render('index.tx', { todos => $todos} );
 };
 1;

@@ -25,10 +25,10 @@
       <: } :>
     </td>
     <td>
-      <a href="/<: $todo.id :>"> <: $todo.body :></a>
+      <a href="/<: $todo._id :>"> <: $todo.body :></a>
     </td>
     <td>
-      <form action="<: $c.req.uri_for('/'~ $todo.id ~'/delete') :>" method="post" class="form-inline" >     
+      <form action="<: $c.req.uri_for('/'~ $todo._id ~'/delete') :>" method="post" class="form-inline" >     
         <input type="submit" value="DONE" class="btn btn-sm btn-warning">
       </form>
     </td>     
