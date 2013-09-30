@@ -2,7 +2,9 @@
 
 : around content -> {
 <div class="row">
+
 <button type="button" data-toggle="modal" data-target="#Modal" class="btn btn-primary btn-block">CREATE NEW TASK</button>
+
 </div>  
 
 <div class="row">
