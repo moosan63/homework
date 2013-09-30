@@ -89,7 +89,6 @@ post '/:id/update' => sub{
 post '/:id/delete' => sub{
     my ($self, $c) = @_;
     my $id = $c->args->{id};
-    print Dumper $c->args->{id};
 
     $self->mongo->remove({_id => MongoDB::OID->new(value => $id)});
 
