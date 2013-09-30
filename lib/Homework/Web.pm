@@ -77,11 +77,11 @@ post '/:id/update' => sub{
     $self->mongo->update(
         {"_id"=>MongoDB::OID->new(value => $id)},
         {
-        body => $body,
-        genre => $genre,
-        priority => $priority,    
-                   });
-
+            body => $body,
+            genre => $genre,
+            priority => $priority,    
+        });
+    
     $c->redirect('/');
 };
 
